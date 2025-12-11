@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+{% block title %}نظام المستخدمين | مدونة CIT{% endblock %}
+
+{% block content %}
+
+<style>
+  /* خلفية كاملة لصفحة التوثيق */
+  .auth-page {
+    min-height: 75vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    padding: 30px 10px;
+    border-radius: 18px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.25);
+  }
+
+  .auth-card {
+    width: 100%;
+    max-width: 430px;
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 24px 22px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  }
+
+  .auth-card h2 {
+    text-align: center;
+    margin-bottom: 16px;
+    color: #2575fc;
+    font-size: 1.3rem;
+  }
+
+  .auth-form {
+    display: none;
+  }
+  .auth-form.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .auth-card input {
+    width: 100%;
+    padding: 11px;
+    margin: 6px 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+  }
+
+  .auth-card button {
+    width: 100%;
+    background: #2575fc;
+    color: white;
+    border: none;
+    padding: 11px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: 0.2s;
+    margin-top: 6px;
+  }
+  .auth-card button:hover {
+    background: #6a11cb;
+  }
+
+  .auth-tabs {
+    text-align: center;
+    margin: 0 0 18px 0;
+  }
+  .auth-tab {
+    display: inline-block;
+    padding: 8px 14px;
+    margin: 0 4px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    font-size: 0.9rem;
+    color: #64748b;
+  }
+  .auth-tab.active {
+    border-color: #2575fc;
+    color: #2575fc;
+    font-weight: 700;
+  }
+
+  .auth-links {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 0.85rem;
+  }
+  .auth-links a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .auth-links a:hover {
+    text-decoration: underline;
+  }
+
+  .auth-alert {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 8px 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 640px) {
+    .auth-card {
+      padding: 20px 16px;
+    }
+  }
+</style>
+
+<div class="auth-page">
+
+  <div class="auth-card">
+
+    {# رسائل فلاش خاصة بهذه الصفحة (اختياري) #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="auth-alert"
+               style="{% if category == 'success' %}background:#d4edda;color:#155724;
+                      {% elif category == 'warning' %}background:#fff3cd;color:#856404;
+                      {% elif category == 'error' %}background:#f8d7da;color:#721c24;
+                      {% endif %}">
+            {{ msg|safe }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="auth-tabs">
+      <span class="auth-tab {% if tab == 'login' or not tab %}active{% endif %}" data-tab="login">
+        تسجيل الدخول
+      </span>
+      <span class="auth-tab {% if tab == 'register' %}active{% endif %}" data-tab="register">
+        إنشاء حساب
+      </span>
+      <span class="auth-tab {% if tab == 'forgot' %}active{% endif %}" data-tab="forgot">
+        استعادة
+      </span>
+    </div>
+
+    <!-- نموذج تسجيل الدخول -->
+    <form method="POST"
+          action="{{ url_for('login') }}"
+          class="auth-form {% if tab == 'login' or not tab %}active{% endif %}"
+          id="login">
+      <h2>تسجيل الدخول</h2>
+      <input type="text"
+             name="login-email"
+             placeholder="اسم المستخدم أو البريد الإلكتروني"
+             required>
+      <input type="password"
+             name="login-password"
+             placeholder="كلمة المرور"
+             required>
+      <button type="submit">تسجيل الدخول</button>
+    </form>
+
+    <!-- نموذج إنشاء حساب -->
+    <form method="POST"
+          action="{{ url_for('register_user') }}"
+          class="auth-form {% if tab == 'register' %}active{% endif %}"
+          id="register">
+      <h2>إنشاء حساب جديد</h2>
+
+      <input type="text"
+             name="register-name"
+             placeholder="الاسم الكامل أو اسم المستخدم"
+             required>
+
+      <input type="email"
+             name="register-email"
+             placeholder="البريد الإلكتروني"
+             required>
+
+      <input type="text"
+             name="register-phone"
+             placeholder="رقم الجوال (اختياري)">
+
+      <input type="password"
+             name="register-password"
+             placeholder="كلمة المرور"
+             required>
+
+      <input type="password"
+             name="register-confirm-password"
+             placeholder="تأكيد كلمة المرور"
+             required>
+
+      <button type="submit">تسجيل</button>
+    </form>
+
+    <!-- نموذج استعادة كلمة المرور -->
+    <form method="POST"
+          action="{{ url_for('forgot_password') }}"
+          class="auth-form {% if tab == 'forgot' %}active{% endif %}"
+          id="forgot">
+      <h2>استعادة كلمة المرور</h2>
+      <input type="email"
+             name="forgot-email"
+             placeholder="أدخل بريدك الإلكتروني المسجل"
+             required>
+      <button type="submit">إرسال رابط الاستعادة</button>
+    </form>
+
+    <div class="auth-links">
+      <a href="{{ url_for('index') }}">🏠 العودة إلى الرئيسية</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const tabs = document.querySelectorAll('.auth-tab');
+    const forms = document.querySelectorAll('.auth-form');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // تبديل التبويب
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // تبديل الفورم
+        forms.forEach(f => f.classList.remove('active'));
+        const target = tab.dataset.tab;
+        const form = document.getElementById(target);
+        if (form) {
+          form.classList.add('active');
+        }
+      });
+    });
+  });
+</script>
+
+{% endblock %}

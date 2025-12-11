@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+
+  {# عنوان التبويب #}
+  <title>{% block title %}مدونة CIT{% endblock %}</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  {# وصف افتراضي يمكن استبداله في الصفحات الفرعية #}
+  <meta name="description" content="{% block meta_description %}مدونة CIT لمحتوى تقني مبسّط باللغة العربية.{% endblock %}">
+
+  {# ==== Open Graph (مشاركة الرابط) ==== #}
+  <meta property="og:title" content="{% block og_title %}مدونة CIT{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}محتوى تقني مبسّط، شروحات وبرامج وتجارب من عالم التقنية.{% endblock %}">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ar_SA">
+  <meta property="og:url" content="{{ request.url }}">
+  <meta property="og:site_name" content="مدونة CIT">
+
+  {# ==== Twitter Cards ==== #}
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block twitter_title %}مدونة CIT{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}محتوى تقني عربي مبسّط من مدونة CIT.{% endblock %}">
+
+  {# ملف الـ CSS الأساسي #}
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+  {# مكان لإضافة CSS إضافي من الصفحات الفرعية عند الحاجة #}
+  {% block extra_css %}{% endblock %}
+
+  {# JSON-LD يمكن تخصيصه في الصفحات (مثلاً صفحة المقال) #}
+  {% block jsonld %}{% endblock %}
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-bar">
+
+    <!-- يمين: الشعار -->
+    <div class="header-right">
+      <a href="{{ url_for('index') }}" class="logo-link">
+        <img src="{{ url_for('static', filename='assets/logo/logo.png') }}"
+             class="logo-img" alt="CIT Logo">
+        <div class="logo-text-block">
+          <span class="logo-text-main">CIT Blog</span>
+          <span class="logo-text-sub">محتوى تقني مبسّط</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- المنتصف: الأقسام -->
+    <nav class="main-nav">
+      <a href="{{ url_for('index') }}"
+         class="nav-link {% if request.path == url_for('index') %}is-active{% endif %}">
+        الرئيسية
+      </a>
+
+      {% if categories %}
+        {% for cat in categories %}
+          <a href="/{{ cat.slug }}"
+             class="nav-link {% if request.path == '/' + cat.slug %}is-active{% endif %}">
+            {{ cat.name }}
+          </a>
+        {% endfor %}
+      {% endif %}
+
+      {% if is_admin and pending_count %}
+        <a href="{{ url_for('pending_users') }}"
+           class="nav-link badge-link">
+          طلبات التفعيل ({{ pending_count }})
+        </a>
+      {% endif %}
+    </nav>
+
+    <!-- اليسار: البحث + تابعنا + إعدادات المدير + حالة المستخدم -->
+    <div class="header-actions">
+
+      <!-- أيقونة البحث -->
+      <button type="button"
+              class="icon-btn search-toggle"
+              id="searchToggle"
+              aria-label="بحث في المدونة">
+        🔍
+      </button>
+
+      <!-- زر تابعنا + القائمة المنسدلة -->
+      <div class="follow-menu">
+        <button type="button" class="follow-btn">
+          <span class="follow-plus">＋</span>
+          <span>تابعنا</span>
+        </button>
+        <div class="follow-dropdown">
+          <a href="https://www.snapchat.com/add/cit.af?share_id=PI1obN8IQzeiXuLQkedVqw&locale=ar_SA@calendar=gregorian;numbers=latn"
+             target="_blank" rel="noopener">
+            👻 سناب شات
+            <span class="follow-handle">@CIT.AF</span>
+          </a>
+        </div>
+      </div>
+
+      {# قائمة الإعدادات (مدير فقط): أقسام + مقالات + مستخدمين #}
+      {% if session.get('logged_in') and session.get('role') == 'admin' %}
+        <div class="follow-menu settings-menu">
+          <button type="button" class="follow-btn">
+            ⚙️ الإعدادات
+          </button>
+          <div class="follow-dropdown">
+            <a href="{{ url_for('admin_categories') }}">📂 إدارة الأقسام</a>
+            <a href="{{ url_for('admin_posts') }}">📝 إدارة المقالات</a>
+            <a href="{{ url_for('admin_users') }}">👥 إدارة المستخدمين</a>
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- حالة المستخدم -->
+      {% if session.get('logged_in') %}
+        <span class="user-name">
+          {{ session.get('username') }}
+          {% if session.get('role') == 'admin' %}(مدير){% endif %}
+        </span>
+
+        <a href="{{ url_for('logout') }}" class="btn-link btn-small">خروج</a>
+
+        {% if session.get('role') == 'admin' %}
+          <a href="{{ url_for('form') }}" class="btn-link btn-small">
+            ➕ مقال جديد
+          </a>
+        {% endif %}
+      {% else %}
+        <a href="{{ url_for('auth_page') }}" class="btn-link btn-small">
+          دخول / تسجيل
+        </a>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <!-- Popover البحث (يظهر عند الضغط على العدسة) -->
+  <div class="search-popover" id="searchPopover">
+    <form action="{{ url_for('search') }}" method="get"
+          class="search-popover-form">
+      <input type="search" name="q"
+             placeholder="ابحث في مدونة CIT..."
+             value="{{ request.args.get('q','') }}">
+      <button type="submit">بحث</button>
+    </form>
+  </div>
+</header>
+
+  <!-- منطقة المحتوى الرئيسية -->
+  <main class="container">
+    {# رسائل الفلاش #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-area">
+          {% for category, msg in messages %}
+            <div class="flash flash-{{ category }}">{{ msg|safe }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- الفوتر -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span class="footer-copy">
+        © {{ current_year|default(2025) }} مدونة CIT – جميع الحقوق محفوظة.
+      </span>
+
+      <span class="footer-separator">•</span>
+
+      <span class="footer-contact">
+        للتواصل عبر سناب شات:
+        <a
+          href="https://www.snapchat.com/add/cit.af?share_id=PI1obN8IQzeiXuLQkedVqw&locale=ar_SA@calendar=gregorian;numbers=latn"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="footer-snap-link"
+        >
+          SNAP <span class="footer-snap-user">@CIT.AF</span>
+        </a>
+      </span>
+    </div>
+
+    <!-- صف الروابط الثابتة -->
+    <div class="footer-inner footer-links-row">
+      <a href="{{ url_for('about_page') }}" class="footer-link">
+        عن المدونة
+      </a>
+      <span class="footer-separator">•</span>
+      <a href="{{ url_for('privacy_page') }}" class="footer-link">
+        سياسة الخصوصية
+      </a>
+      <span class="footer-separator">•</span>
+      <a href="{{ url_for('contact_page') }}" class="footer-link">
+        تواصل معنا
+      </a>
+    </div>
+  </footer>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggle = document.getElementById("searchToggle");
+    const popover = document.getElementById("searchPopover");
+    const input = popover ? popover.querySelector("input[type='search']") : null;
+
+    if (!toggle || !popover) return;
+
+    toggle.addEventListener("click", function (e) {
+      e.stopPropagation();
+      popover.classList.toggle("is-open");
+      if (popover.classList.contains("is-open") && input) {
+        setTimeout(function () { input.focus(); }, 60);
+      }
+    });
+
+    document.addEventListener("click", function (e) {
+      if (!popover.contains(e.target) && e.target !== toggle) {
+        popover.classList.remove("is-open");
+      }
+    });
+  });
+  </script>
+
+  {# مكان لإضافة JS إضافي من الصفحات الفرعية عند الحاجة #}
+  {% block extra_js %}{% endblock %}
+
+</body>
+</html>

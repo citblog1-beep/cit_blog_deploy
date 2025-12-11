@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}نتائج البحث{% endblock %}
+
+{% block content %}
+<section class="sections-preview">
+  {% if query %}
+    <h2>🔎 نتائج البحث عن: "{{ query }}"</h2>
+  {% else %}
+    <h2>🔍 ابحث عن المقالات داخل مدونة CIT</h2>
+  {% endif %}
+
+  {% if results %}
+    <ul style="list-style:none; padding:0;">
+      {% for r in results %}
+        <li style="margin:15px 0; border-bottom:1px solid #ddd; padding-bottom:10px;">
+          <a href="/post/{{ r.category }}/{{ r.filename }}" style="font-size:18px; font-weight:bold;">{{ r.title }}</a>
+          <p style="color:#555;">{{ r.snippet|safe }}</p>
+          <small>📂 القسم: {{ r.category }}</small>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div style="text-align:center; padding:40px;">
+      {% if query %}
+        <p style="font-size:18px;">😔 لم يتم العثور على نتائج مطابقة.</p>
+      {% else %}
+        <p style="font-size:18px;">ابدأ بالبحث عن مقالاتك هنا 🔍</p>
+      {% endif %}
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

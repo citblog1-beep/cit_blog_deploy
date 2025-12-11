@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} - مدونة CIT{% endblock %}
+
+{% block content %}
+<section class="sections-preview">
+  <h2>{{ title }}</h2>
+
+  {% if is_admin %}
+  <div style="text-align:center; margin-bottom:20px;">
+    <a href="{{ url_for('form') }}" class="btn">✍️ أضف مقالاً جديدًا</a>
+  </div>
+  {% endif %}
+
+  <div class="sections-grid">
+    {% if posts %}
+      {% for filename, title in posts %}
+      <div class="section-card">
+        <h3>{{ title }}</h3>
+        <a href="{{ url_for('view_post', category=category, filename=filename) }}" class="btn">
+          عرض المقال
+        </a>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p style="color: gray;">⚠️ لا يوجد مواضيع حالياً في هذا القسم.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

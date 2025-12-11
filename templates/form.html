@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+{% block title %}✍️ أضف مقالاً - مدونة CIT{% endblock %}
+
+{% block content %}
+
+{% if request.args.get('success') == '1' %}
+  <div class="success-message">✅ تم نشر المقال بنجاح!</div>
+{% endif %}
+
+<section class="form-section form-card">
+  <h2 class="form-title">✍️ أضف مقالاً جديدًا</h2>
+
+  <form method="POST" action="/submit" id="postForm" class="form-add-post">
+
+    <!-- عنوان -->
+    <label for="title">📌 عنوان المقال:</label>
+    <input type="text" name="title" id="title" required>
+
+    <!-- اسم الملف -->
+    <label for="filename">📁 اسم الملف (بالإنجليزية، بدون فراغات):</label>
+    <input type="text" name="filename" id="filename" required>
+    <div id="filename-status" style="margin-top:4px; font-size:0.9rem;"></div>
+
+    <!-- القسم -->
+    <label for="category">📂 القسم:</label>
+    <select name="category" id="category" required>
+      {% if categories %}
+        {% for cat in categories %}
+          {% set icon = '📂' %}
+          {% if 'برمج' in cat.name %}{% set icon = '🛠️' %}
+          {% elif 'شروح' in cat.name %}{% set icon = '📚' %}
+          {% elif 'مقال' in cat.name %}{% set icon = '🧠' %}
+          {% elif 'خدم' in cat.name %}{% set icon = '💡' %}
+          {% elif 'ذكاء' in cat.name %}{% set icon = '🤖' %}
+          {% endif %}
+          <option value="{{ cat.folder }}">{{ icon }} {{ cat.name }}</option>
+        {% endfor %}
+      {% else %}
+        <option disabled>لا توجد أقسام حالياً</option>
+      {% endif %}
+    </select>
+
+    <!-- بطاقة المحرر -->
+    <div class="editor-card">
+      <div class="editor-header">📄 محرر المقال</div>
+
+      <!-- شريط أدوات من صفّين -->
+      <div id="toolbar" class="ql-toolbar ql-snow custom-toolbar">
+        <!-- الصف الأول: خط + حجم + تنسيق + ألوان -->
+        <div class="toolbar-row">
+          <span class="ql-formats">
+            <select class="ql-font">
+              <option value="cairo" selected>Cairo</option>
+              <option value="sans-serif">Default</option>
+            </select>
+            <select class="ql-size">
+              <option value="small">صغير</option>
+              <option selected></option>
+              <option value="large">كبير</option>
+              <option value="huge">ضخم</option>
+            </select>
+          </span>
+
+          <span class="ql-formats">
+            <button class="ql-bold"></button>
+            <button class="ql-italic"></button>
+            <button class="ql-underline"></button>
+            <button class="ql-strike"></button>
+          </span>
+
+          <span class="ql-formats">
+            <select class="ql-color"></select>
+            <select class="ql-background"></select>
+          </span>
+        </div>
+
+        <!-- الصف الثاني: قوائم + محاذاة + اقتباس + ميديا + تنظيف -->
+        <div class="toolbar-row">
+          <span class="ql-formats">
+            <button class="ql-list" value="ordered"></button>
+            <button class="ql-list" value="bullet"></button>
+          </span>
+
+          <span class="ql-formats">
+            <button class="ql-align" value=""></button>
+            <button class="ql-align" value="center"></button>
+            <button class="ql-align" value="right"></button>
+            <button class="ql-align" value="justify"></button>
+          </span>
+
+          <span class="ql-formats">
+            <button class="ql-blockquote"></button>
+          </span>
+
+          <span class="ql-formats">
+            <!-- أزرار مخصصة -->
+            <button type="button" class="ql-uploadImage" title="رفع صورة من جهازك">📷</button>
+            <button type="button" class="ql-uploadVideo" title="إدراج فيديو YouTube">🎬</button>
+
+            <!-- أدوات Quill الأصلية -->
+            <button class="ql-link"></button>
+            <button class="ql-image"></button>
+            <button class="ql-video"></button>
+          </span>
+
+          <span class="ql-formats">
+            <button class="ql-clean"></button>
+          </span>
+        </div>
+      </div>
+
+      <div id="editor" class="editor-area"></div>
+    </div>
+
+    <!-- الحقل الذي سيحمل HTML النهائي -->
+    <input type="hidden" name="content" id="content">
+
+    <!-- زر النشر -->
+    <button type="submit" class="btn" style="margin-top:20px;">✅ نشر المقال</button>
+  </form>
+</section>
+
+<!-- مكتبات Quill -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  /* ========== إعداد الخطوط ========== */
+  const Font = Quill.import('formats/font');
+  Font.whitelist = ['cairo', 'sans-serif'];
+  Quill.register(Font, true);
+
+  /* ========== تهيئة Quill مع التولبار المخصص ========== */
+  const quill = new Quill('#editor', {
+    theme: 'snow',
+    placeholder: '✍️ اكتب مقالك هنا...',
+    modules: { toolbar: '#toolbar' }
+  });
+
+  const DRAFT_KEY = "draft_post";
+  const params = new URLSearchParams(window.location.search);
+  const isSuccess = params.get("success") === "1";
+
+  const titleInput = document.getElementById("title");
+  const filenameInput = document.getElementById("filename");
+  const categorySelect = document.getElementById("category");
+
+  /* ========== مسودة / استرجاع ========= */
+  if (isSuccess) {
+    localStorage.removeItem(DRAFT_KEY);
+    if (titleInput) titleInput.value = "";
+    if (filenameInput) filenameInput.value = "";
+    if (categorySelect) categorySelect.selectedIndex = 0;
+    quill.setContents([]);
+  } else {
+    const savedDraft = localStorage.getItem(DRAFT_KEY);
+    if (savedDraft) {
+      try {
+        const draft = JSON.parse(savedDraft);
+        if (draft.title && titleInput) titleInput.value = draft.title;
+        if (draft.filename && filenameInput) filenameInput.value = draft.filename;
+        if (draft.content) quill.root.innerHTML = draft.content;
+        if (draft.category && categorySelect) categorySelect.value = draft.category;
+      } catch (e) {
+        console.warn("Failed to parse draft_post:", e);
+      }
+    }
+  }
+
+  setInterval(() => {
+    const draft = {
+      title: titleInput ? titleInput.value : "",
+      filename: filenameInput ? filenameInput.value : "",
+      category: categorySelect ? categorySelect.value : "",
+      content: quill.root.innerHTML
+    };
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+  }, 10000);
+
+  /* ========== توليد اسم الملف من العنوان ========= */
+  titleInput.addEventListener("input", () => {
+    let value = titleInput.value
+      .trim()
+      .toLowerCase()
+      .replace(/[\u0600-\u06FF]/g, "")
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "");
+    filenameInput.value = value;
+  });
+
+  /* ========== فحص تكرار اسم الملف ========= */
+  filenameInput.addEventListener("input", checkFilename);
+  categorySelect.addEventListener("change", checkFilename);
+
+  async function checkFilename() {
+    const filename = filenameInput.value.trim();
+    const category = categorySelect.value;
+    const statusBox = document.getElementById("filename-status");
+
+    if (!filename) {
+      statusBox.textContent = "";
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `/check_filename?category=${encodeURIComponent(category)}&filename=${encodeURIComponent(filename)}`
+      );
+      const data = await res.json();
+
+      if (data.exists) {
+        statusBox.innerHTML = "❌ هذا الاسم مستخدم مسبقًا — اختر اسمًا آخر";
+        statusBox.style.color = "#b91c1c";
+      } else {
+        statusBox.innerHTML = "✔️ الاسم متاح";
+        statusBox.style.color = "#15803d";
+      }
+    } catch (e) {
+      console.error("Filename check failed:", e);
+      statusBox.innerHTML = "⚠️ تعذّر التحقق من الاسم الآن";
+      statusBox.style.color = "#92400e";
+    }
+  }
+
+  /* ========== عند الإرسال: نسخ HTML ========= */
+  document.getElementById("postForm").addEventListener("submit", function() {
+    document.querySelector("#content").value = quill.root.innerHTML;
+  });
+
+  /* ========== زر رفع صورة من الجهاز ========= */
+  const uploadBtn = document.querySelector('.ql-uploadImage');
+  if (uploadBtn) {
+    uploadBtn.addEventListener('click', () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.click();
+
+      input.onchange = async () => {
+        const file = input.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+          const res = await fetch('/upload_image', { method: 'POST', body: formData });
+          const data = await res.json();
+
+          if (data.url) {
+            const range = quill.getSelection(true) || { index: quill.getLength() };
+            quill.insertEmbed(range.index, 'image', data.url);
+          } else {
+            alert("⚠️ فشل رفع الصورة");
+          }
+        } catch (e) {
+          console.error("Upload failed:", e);
+          alert("⚠️ حدث خطأ أثناء رفع الصورة");
+        }
+      };
+    });
+  }
+
+  /* ========== زر إدراج فيديو YouTube ========= */
+  const ytBtn = document.querySelector('.ql-uploadVideo');
+  if (ytBtn) {
+    ytBtn.addEventListener("click", () => {
+      const url = prompt("🎥 أدخل رابط فيديو YouTube:");
+      if (!url) return;
+
+      const match = url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]+)/);
+      if (!match) {
+        alert("❌ الرابط غير صحيح");
+        return;
+      }
+
+      const embedUrl = `https://www.youtube.com/embed/${match[1]}`;
+      const range = quill.getSelection(true) || { index: quill.getLength() };
+      quill.insertEmbed(range.index, 'video', embedUrl);
+    });
+  }
+
+});
+</script>
+
+{% endblock %}

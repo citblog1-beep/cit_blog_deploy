@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>1</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}">
+</head>
+<body>
+
+  <!-- الترويسة -->
+  <header>
+    <div class="header-flex">
+      <div class="logo-box">
+        <img src="{{ url_for('static', filename='assets/logo.png') }}" alt="CIT Logo" class="logo">
+      </div>
+      <div class="center-box">
+        <h1>CIT مدونة</h1>
+        <p>المعرفة التقنية ببساطة</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- قائمة التنقل -->
+  <nav class="main-nav">
+    <a href="/">الرئيسية</a>
+    <a href="/projects">برمجتي</a>
+    <a href="/tutorials">شروحاتي</a>
+    <a href="/articles">مقالاتي</a>
+    <a href="/form">✍️ أضف مقالاً</a>
+    <a href="/logout">تسجيل الخروج</a>
+  </nav>
+
+  <!-- محتوى المقال -->
+  <div class="sections-preview">
+    <h2>1</h2>
+    <hr>
+    <div>
+      {{ content|safe }}
+    </div>
+  </div>
+
+  <!-- الفوتر -->
+  <footer>
+    جميع الحقوق محفوظة © CIT-AF 2025
+  </footer>
+
+<hr>
+<h3>💬 التعليقات</h3>
+
+<!-- ✅ عرض التعليقات -->
+{% for comment in comments %}
+  <div style="background-color: #f0f0f0; padding: 10px; margin-bottom: 10px; border-radius: 8px;">
+    <strong>{{ comment['name'] }}</strong> - <small>{{ comment['timestamp'] }}</small>
+    <p>{{ comment['comment'] }}</p>
+  </div>
+{% else %}
+  <p>لا توجد تعليقات بعد.</p>
+{% endfor %}
+
+<!-- ✅ نموذج التعليق -->
+<h4>أضف تعليقك:</h4>
+<form action="{{ url_for('add_comment', filename=filename) }}" method="post">
+  <label for="name">اسمك:</label><br>
+  <input type="text" id="name" name="name" required><br><br>
+
+  <label for="comment">تعليقك:</label><br>
+  <textarea id="comment" name="comment" rows="4" cols="50" required></textarea><br><br>
+
+  <button type="submit">إرسال التعليق</button>
+</form>
+
+</body>
+</html>

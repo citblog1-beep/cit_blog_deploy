@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}تواصل معي - مدونة CIT{% endblock %}
+
+{% block meta_description %}
+تواصل معي في مدونة CIT لاقتراحات التعاون، الاستفسارات التقنية، أو الملاحظات حول المحتوى.
+{% endblock %}
+
+{% block og_title %}تواصل معي{% endblock %}
+{% block og_description %}
+نموذج تواصل مع صاحب مدونة CIT لإرسال الاقتراحات والاستفسارات.
+{% endblock %}
+
+{% block twitter_title %}تواصل معي - مدونة CIT{% endblock %}
+{% block twitter_description %}
+يمكنك مراسلتي عبر نموذج التواصل في مدونة CIT لطرح أي سؤال أو اقتراح.
+{% endblock %}
+
+{% block content %}
+<section class="intro">
+  <h1>تواصل معي</h1>
+  <p>
+    يسعدني استقبال ملاحظاتك، اقتراحاتك، أو استفساراتك حول المحتوى والبرامج التي أقدمها
+    عبر هذه المدونة.
+  </p>
+</section>
+
+{# نموذج التواصل الرئيسي #}
+<section class="sections-preview">
+  <h2>📩 نموذج التواصل</h2>
+
+  <div class="sections-grid" style="max-width:600px; margin:0 auto;">
+    <article class="section-card" style="width:100%;">
+      <form method="post" action="{{ url_for('contact_page') }}" class="contact-form">
+        <div class="form-group">
+          <label for="name">الاسم</label>
+          <input id="name" name="name" type="text" required placeholder="اكتب اسمك الكامل">
+        </div>
+
+        <div class="form-group">
+          <label for="email">البريد الإلكتروني</label>
+          <input id="email" name="email" type="email" required placeholder="example@email.com">
+        </div>
+
+        <div class="form-group">
+          <label for="message">نص الرسالة</label>
+          <textarea id="message" name="message" rows="5" required
+                    placeholder="اكتب سؤالك أو رسالتك هنا..."></textarea>
+        </div>
+
+        <button type="submit" class="btn">إرسال الرسالة</button>
+      </form>
+    </article>
+  </div>
+</section>
+
+{# طرق أخرى للتواصل (واتساب / سناب / بريد) #}
+<section class="sections-preview">
+  <h2>📞 طرق أخرى للتواصل</h2>
+
+  <div class="sections-grid">
+    {# واتساب #}
+    <article class="section-card">
+      <h3>💬 واتساب</h3>
+      <p>
+        يمكنك التواصل معي مباشرة عبر الواتساب على الرقم:
+        <strong dir="ltr">0501311507</strong>
+      </p>
+      <a href="https://wa.me/966501311507"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="btn">
+        فتح واتساب
+      </a>
+    </article>
+
+    {# سناب شات #}
+    <article class="section-card">
+      <h3>👻 سناب شات</h3>
+      <p>
+        تابعني على السناب لمتابعة الشروحات والبرامج الجديدة:
+        <strong dir="ltr">@CIT.AF</strong>
+      </p>
+      <a href="https://www.snapchat.com/add/cit.af?share_id=PI1obN8IQzeiXuLQkedVqw&locale=ar_SA@calendar=gregorian;numbers=latn"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="btn">
+        فتح سناب شات
+      </a>
+    </article>
+
+    {# البريد الإلكتروني #}
+    <article class="section-card">
+      <h3>📧 البريد الإلكتروني</h3>
+      <p>
+        تقدر تراسلني مباشرة على البريد:
+        <strong dir="ltr">cit.blog1@gmail.com</strong>
+      </p>
+      <a href="mailto:cit.blog1@gmail.com" class="btn">
+        إرسال بريد الآن
+      </a>
+    </article>
+  </div>
+</section>
+{% endblock %}

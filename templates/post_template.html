@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{# عنوان تبويب المتصفح #}
+{% block title %}{{ title }} - مدونة CIT{% endblock %}
+
+{# وصف ميتا خاص بالمقال #}
+{% block meta_description %}
+{{ title }} - مقال ضمن قسم {{ category_name }} في مدونة CIT، بمحتوى تقني مبسّط ومفيد للقارئ العربي.
+{% endblock %}
+
+{# OG لمشاركة الرابط #}
+{% block og_title %}{{ title }} - مدونة CIT{% endblock %}
+{% block og_description %}
+{{ title }} - مقال من قسم {{ category_name }} في مدونة CIT، يقدّم معلومات تقنية وشروحات بطريقة سهلة وواضحة.
+{% endblock %}
+
+{# Twitter Cards #}
+{% block twitter_title %}{{ title }} - مدونة CIT{% endblock %}
+{% block twitter_description %}
+مقال بعنوان "{{ title }}" من قسم {{ category_name }} في مدونة CIT، لمحتوى تقني مبسّط باللغة العربية.
+{% endblock %}
+
+{# JSON-LD Article #}
+{% block jsonld %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": {{ title|tojson }},
+  "inLanguage": "ar-SA",
+  "articleSection": {{ category_name|tojson }},
+  "url": {{ request.url|tojson }},
+  "mainEntityOfPage": {{ request.url|tojson }},
+  "author": {
+    "@type": "Organization",
+    "name": "CIT Blog"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "CIT Blog"
+  }
+  {% if date and date != 'غير محدد' %},
+  "datePublished": {{ date|tojson }}
+  {% endif %}
+}
+</script>
+{% endblock %}
+
+{% block content %}
+
+<div class="article-wrapper post-page">
+
+  <!-- بطاقة المقال -->
+  <article class="article-card post-container">
+
+    <!-- مسار المقال + زر العودة للقسم -->
+    <header class="post-header">
+      <div class="post-breadcrumb">
+        <div class="breadcrumb-left">
+          <span class="breadcrumb-label">هذا المقال ضمن قسم:</span>
+          <span class="category-chip">{{ category_name }}</span>
+        </div>
+
+        <a href="{{ url_for('dynamic_category', slug=category_slug) }}" class="back-pill">
+          <span class="back-icon">↩</span>
+          <span class="back-label">عودة إلى {{ category_name }}</span>
+        </a>
+      </div>
+
+      <h1 class="article-title">{{ title }}</h1>
+
+      <div class="meta-info">
+        {# نعرض التاريخ فقط إذا كان موجود فعلاً #}
+        {% if date %}
+          <span>📅 {{ date }}</span>
+        {% endif %}
+        <span>👁️ {{ views }} مشاهدة</span>
+      </div>
+    </header>
+
+    <!-- محتوى المقال -->
+    <div class="article-content">
+      {{ content|safe }}
+    </div>
+  </article>
+
+  <!-- التعليقات -->
+  <section class="comments-section" id="comments">
+    <h3 class="comments-title">💬 التعليقات</h3>
+
+    {% if comments and comments|length > 0 %}
+      {% for comment in comments %}
+        <div class="comment-card">
+          <div class="comment-header">
+            <span>{{ comment.name }}</span>
+            <span class="comment-time">{{ comment.timestamp }}</span>
+          </div>
+          <p class="comment-text">{{ comment.comment }}</p>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="comment-text">لا توجد تعليقات بعد.</p>
+    {% endif %}
+
+    {% if session.get('logged_in') %}
+      <form action="{{ url_for('add_comment', category=category_slug, filename=filename) }}"
+            method="post"
+            class="comment-form">
+        <textarea name="comment"
+                  placeholder="اكتب تعليقك هنا..."
+                  required></textarea>
+        <button type="submit">إرسال التعليق</button>
+      </form>
+    {% else %}
+      <p class="comment-text">
+        🚫 يجب تسجيل الدخول لإضافة تعليق.
+        <a href="{{ url_for('auth_page') }}" class="btn-link">دخول / تسجيل</a>
+      </p>
+    {% endif %}
+  </section>
+
+  <!-- مقالات مشابهة -->
+  {% if related_posts and related_posts|length > 0 %}
+    <section class="related-section">
+      <h3>📌 مقالات مشابهة من نفس القسم</h3>
+      <div class="related-grid">
+        {% for post in related_posts %}
+          <a href="{{ post.url }}" class="related-card">
+            <h4>{{ post.title }}</h4>
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  <!-- استكشف أقسام أخرى -->
+  <section class="other-sections">
+    <div class="other-card">
+      <div class="other-header">
+        <div class="other-icon">🧭</div>
+        <div>
+          <h4 class="other-title">استكشف أقسام أخرى</h4>
+          <p class="other-subtitle">انتقل إلى أقسام أخرى من مدونة CIT</p>
+        </div>
+      </div>
+      <div class="sections-list">
+        <a href="{{ url_for('projects') }}" class="section-pill">
+          <span class="section-pill-label"> برمجتي</span>
+        </a>
+        <a href="{{ url_for('tutorials') }}" class="section-pill">
+          <span class="section-pill-label"> شروحاتي</span>
+        </a>
+        <a href="{{ url_for('articles') }}" class="section-pill">
+          <span class="section-pill-label"> مقالاتي</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,307 @@
+/* 🧠 الخط العام */
+body {
+  font-family: 'Cairo', sans-serif;
+  direction: rtl;
+  margin: 0;
+  background-color: #F7F8FA;
+  color: #1A1A1A;
+  line-height: 1.8;
+}
+
+h1, h2, h3 {
+  color: #2C3E50;
+  margin-top: 0.5em;
+  margin-bottom: 0.3em;
+}
+
+/* ======================= */
+/* الهيدر الثابت العادي */
+/* ======================= */
+header {
+  background: linear-gradient(135deg, #0d1b2a, #1e90ff);
+  color: white;
+  padding: 30px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.25);
+}
+
+.header-left img.logo {
+  width: 75px;
+  transition: transform 0.3s ease;
+}
+.header-left img.logo:hover {
+  transform: scale(1.08) rotate(-3deg);
+}
+
+.header-center {
+  flex: 1;
+  text-align: center;
+}
+.header-center .header-text {
+  font-size: 22px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.header-right {
+  text-align: right;
+}
+.site-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: white;
+}
+
+/* للجوال */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    text-align: center;
+  }
+  .header-left, .header-right {
+    display: none;
+  }
+  .header-center .header-text {
+    font-size: 20px;
+  }
+}
+
+/* ======================= */
+/* شريط التنقل */
+/* ======================= */
+.glass-nav {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  background: rgba(255,255,255,0.15);
+  padding: 12px 25px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  margin: 15px auto 0;
+  max-width: 95%;
+  /* كان overflow-x:auto; يسبب قصّ المنسدلة */
+  overflow: visible;         /* ✅ اسمح للمنسدلة بالخروج خارج الشريط */
+  position: relative;
+  z-index: 1000;             /* ✅ ارفع فوق باقي المحتوى */
+}
+
+.main-nav a {
+  color: #222;
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  position: relative;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+.main-nav a::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #ffca28;
+  transition: width 0.3s ease;
+}
+.main-nav a:hover::after {
+  width: 100%;
+}
+.main-nav a:hover {
+  color: #ffca28;
+  transform: translateY(-2px);
+}
+
+/* زر المدير */
+.admin-btn {
+  background: #ffca28;
+  color: black !important;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+.admin-btn:hover {
+  background: #ffd54f;
+}
+
+/* ======================= */
+/* المحتوى العام */
+/* ======================= */
+main {
+  flex: 1;
+  padding-top: 160px; /* مساحة بسيطة للهيدر */
+  position: relative;
+  z-index: 1;
+}
+
+/* ======================= */
+/* الأقسام */
+/* ======================= */
+.sections-preview {
+  background: #ffffff;
+  margin: 80px auto;
+  padding: 40px;
+  max-width: 1100px;
+  border-radius: 18px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+.sections-preview h2 {
+  font-size: 26px;
+  color: #0d47a1;
+  margin-bottom: 35px;
+  letter-spacing: 1px;
+}
+
+/* شبكة البطاقات */
+.sections-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}
+
+/* البطاقة */
+.section-card {
+  background: linear-gradient(135deg, #3a8dff, #00bcd4);
+  color: white;
+  border-radius: 15px;
+  padding: 30px 25px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+.section-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  background: linear-gradient(135deg, #1976d2, #0097a7);
+}
+.section-card h3 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+.section-card p {
+  font-size: 15px;
+  opacity: 0.9;
+  margin-bottom: 15px;
+}
+/* زر داخل البطاقة */
+.section-card .btn {
+  display: inline-block;
+  padding: 8px 18px;
+  background: #fff;
+  color: #1976d2;
+  font-weight: 700;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: transform 0.2s, background 0.2s;
+}
+.section-card .btn:hover {
+  background: #e3f2fd;
+  transform: scale(1.05);
+}
+
+/* ===== Dropdown in navbar ===== */
+.nav-links {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropbtn {
+  background: transparent;
+  border: none;
+  color: #222;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 6px 10px;
+}
+.dropbtn:focus {
+  outline: none;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;          /* RTL */
+  top: 100%;
+  min-width: 220px;
+  background: rgba(13, 27, 42, 0.95);
+  border-radius: 10px;
+  padding: 10px 0;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  z-index: 1001;    /* فوق عناصر النافبار */
+}
+.dropdown-content a {
+  color: #e3f2fd;
+  text-decoration: none;
+  display: block;
+  padding: 10px 16px;
+  white-space: nowrap;
+  transition: background 0.2s, padding-right 0.2s;
+}
+.dropdown-content a:hover {
+  background: rgba(255, 255, 255, 0.08);
+  padding-right: 20px;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+.dropdown:hover .dropbtn {
+  color: #ffca28;
+}
+
+.dropbtn .mini-badge {
+  background:#e3f2fd;
+  color:#fff;
+  border-radius:999px;
+  padding:0 6px;
+  font-size:11px;
+  margin-right:6px;
+}
+.badge-inline {
+  background:#e3f2fd;
+  color:#e3f2fd;
+  border-radius:10px;
+  padding:0 6px;
+  font-size:12px;
+  margin-right:6px;
+}
+
+/* خلفية خاصة بصفحات المقال */
+body.post-page {
+  background: linear-gradient(180deg, #fefefe 0%, #f5f7fa 100%);
+}
+
+/* تحسين عرض المقال */
+.post-container {
+  max-width: 900px;
+  margin: 40px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+}
+.post-content img {
+  max-width: 100%;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+.related-sections div:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}

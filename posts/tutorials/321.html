@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1 - مدونة CIT</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <div class="header-flex">
+    <div class="logo-box">
+      <img src="{{ url_for('static', filename='assets/logo/CIT_Logo_Transparent.png') }}" alt="CIT Logo" class="logo">
+    </div>
+    <div class="center-box">
+      <h1>مدونة CIT</h1>
+      <p>التقنية بلغة عملية وبسيطة</p>
+    </div>
+  </div>
+
+  <nav class="main-nav">
+    <a href="/">الرئيسية</a>
+    <a href="/projects">برمجتي</a>
+    <a href="/tutorials">شروحاتي</a>
+    <a href="/articles">مقالاتي</a>
+    <a href="/about">عن المدونة</a>
+    <a href="/contact">تواصل</a>
+  </nav>
+</header>
+
+<main>
+  <article class="article-content">
+    <h1>1</h1>
+    <div class="post-body">
+      {{ content|safe }}
+    </div>
+
+    <div class="back-btn">
+      <a href="javascript:history.back()" class="btn">⬅️ الرجوع إلى القسم</a>
+    </div>
+  </article>
+</main>
+
+<footer>
+  <p>© 2025 مدونة CIT - جميع الحقوق محفوظة</p>
+</footer>
+
+</body>
+</html>

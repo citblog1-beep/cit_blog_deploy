@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}سياسة الخصوصية - مدونة CIT{% endblock %}
+
+{% block meta_description %}
+سياسة الخصوصية الخاصة بمدونة CIT توضح كيفية التعامل مع بيانات الزوار وملفات تعريف الارتباط وخدمات الأطراف الثالثة.
+{% endblock %}
+
+{% block og_title %}سياسة الخصوصية{% endblock %}
+{% block og_description %}
+اطلع على سياسة الخصوصية لمدونة CIT وكيفية التعامل مع بياناتك عند زيارة الموقع.
+{% endblock %}
+
+{% block twitter_title %}سياسة الخصوصية - مدونة CIT{% endblock %}
+{% block twitter_description %}
+معلومات حول خصوصية البيانات واستخدام ملفات تعريف الارتباط في مدونة CIT.
+{% endblock %}
+
+{% block content %}
+<section class="intro">
+  <h1>سياسة الخصوصية</h1>
+  <p>
+    في مدونة CIT نحترم خصوصيتك ونسعى لعدم طلب أي بيانات شخصية أكثر من اللازم،
+    ونستخدم ما يتم جمعه فقط لتحسين تجربة التصفح.
+  </p>
+</section>
+
+<section class="sections-preview">
+  <h2>1. البيانات التي قد يتم جمعها</h2>
+
+  <div class="sections-grid" style="max-width:900px; margin:0 auto;">
+    <article class="section-card" style="width:100%;">
+      <h3>سجلات الزيارة (Log Files)</h3>
+      <p>
+        مثل معظم المواقع، قد يتم تسجيل بعض المعلومات بشكل آلي عند زيارتك للموقع،
+        مثل:
+      </p>
+      <ul style="margin-top:8px; padding-right:20px; line-height:1.9;">
+        <li>عنوان الـ IP الخاص بك.</li>
+        <li>نوع المتصفح ونظام التشغيل.</li>
+        <li>الصفحات التي تمت زيارتها داخل الموقع.</li>
+        <li>وقت وتاريخ الزيارة.</li>
+      </ul>
+      <p>
+        هذه المعلومات تستخدم لأغراض إحصائية عامة وتحسين المحتوى، ولا يتم ربطها
+        مباشرة بهويتك الشخصية.
+      </p>
+    </article>
+  </div>
+</section>
+
+<section class="sections-preview">
+  <h2>2. ملفات تعريف الارتباط (Cookies)</h2>
+
+  <div class="sections-grid" style="max-width:900px; margin:0 auto;">
+    <article class="section-card" style="width:100%;">
+      <p>
+        قد يستخدم الموقع ملفات تعريف الارتباط لتخزين بعض التفضيلات البسيطة،
+        مثل اللغة أو تفضيلات الواجهة، بهدف تحسين تجربتك في الزيارات القادمة.
+      </p>
+      <p>
+        يمكنك دائمًا تعطيل استخدام ملفات الارتباط من إعدادات المتصفح، ولكن
+        قد يؤثر ذلك على بعض ميزات الموقع.
+      </p>
+    </article>
+  </div>
+</section>
+
+<section class="sections-preview">
+  <h2>3. خدمات الطرف الثالث (Third-party)</h2>
+
+  <div class="sections-grid" style="max-width:900px; margin:0 auto;">
+    <article class="section-card" style="width:100%;">
+      <p>
+        قد يتم في المستقبل استخدام خدمات إعلانية أو تحليلية خارجية
+        مثل <strong>Google AdSense</strong> أو <strong>Google Analytics</strong>.
+      </p>
+      <p>
+        هذه الخدمات قد تستخدم ملفات تعريف الارتباط أو إشارات ويب لجمع بيانات
+        إحصائية عن زيارات الصفحات وأنواع الأجهزة ومتصفحات الزوار.
+      </p>
+      <p>
+        استخدامك للموقع يعني موافقتك على سياسة الخصوصية الخاصة بتلك الخدمات
+        وفقًا لسياساتهم المنشورة على مواقعهم الرسمية.
+      </p>
+    </article>
+  </div>
+</section>
+
+<section class="sections-preview">
+  <h2>4. نموذج التواصل</h2>
+
+  <div class="sections-grid" style="max-width:900px; margin:0 auto;">
+    <article class="section-card" style="width:100%;">
+      <p>
+        عند استخدامك لنموذج <a href="{{ url_for('contact_page') }}" style="color:#facc15;">تواصل معي</a>،
+        قد يتم تخزين البيانات التي تُدخلها (الاسم، البريد، الرسالة) لغرض:
+      </p>
+      <ul style="margin-top:8px; padding-right:20px; line-height:1.9;">
+        <li>الرد على استفسارك أو ملاحظتك.</li>
+        <li>متابعة جودة المحتوى والخدمات المقدمة في المدونة.</li>
+      </ul>
+      <p>
+        لن يتم بيع بياناتك أو مشاركتها مع جهات خارجية لأغراض تجارية.
+      </p>
+    </article>
+  </div>
+</section>
+
+<section class="sections-preview">
+  <h2>5. التعديلات على هذه السياسة</h2>
+
+  <div class="sections-grid" style="max-width:900px; margin:0 auto;">
+    <article class="section-card" style="width:100%;">
+      <p>
+        قد يتم تحديث سياسة الخصوصية من وقت لآخر بما يتوافق مع تطوير المدونة
+        أو إضافة خدمات جديدة. سيتم اعتبار استمرارك في استخدام الموقع بعد
+        أي تعديل موافقةً منك على السياسة المحدثة.
+      </p>
+    </article>
+  </div>
+</section>
+{% endblock %}

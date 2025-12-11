@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}🗂️ إدارة الأقسام{% endblock %}
+{% block content %}
+
+<section class="form-section" style="max-width: 900px;">
+  <h2>🗂️ إدارة الأقسام</h2>
+
+  {% if message %}
+    <div class="success-message">{{ message }}</div>
+  {% endif %}
+  {% if error %}
+    <div class="success-message" style="background:#ffe8e8; color:#b00020; border-color:#ffb3b3;">
+      {{ error }}
+    </div>
+  {% endif %}
+
+  <form method="POST" class="form-add-post">
+    <label>اسم القسم</label>
+    <input type="text" name="name" placeholder="مثال: الذكاء الاصطناعي" required>
+
+    <label>ترتيب العرض (اختياري)</label>
+    <input type="number" name="sort_order" value="0">
+
+    <button type="submit" class="btn">➕ إنشاء قسم</button>
+  </form>
+
+  <hr style="margin: 25px 0;">
+
+  <h3>القائمة الحالية</h3>
+  {% if categories %}
+    <table style="width:100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th style="text-align:right; padding:8px; border-bottom:1px solid #ddd;">#</th>
+          <th style="text-align:right; padding:8px; border-bottom:1px solid #ddd;">الاسم</th>
+          <th style="text-align:right; padding:8px; border-bottom:1px solid #ddd;">الرابط</th>
+          <th style="text-align:right; padding:8px; border-bottom:1px solid #ddd;">المجلد</th>
+          <th style="text-align:right; padding:8px; border-bottom:1px solid #ddd;">تحكم</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in categories %}
+        <tr>
+          <td style="padding:8px; border-bottom:1px solid #eee;">{{ c.id }}</td>
+          <td style="padding:8px; border-bottom:1px solid #eee;">{{ c.name }}</td>
+          <td style="padding:8px; border-bottom:1px solid #eee;">
+            <code>/{{ c.slug }}</code>
+          </td>
+          <td style="padding:8px; border-bottom:1px solid #eee;">
+            <code>{{ c.folder }}</code>
+          </td>
+          <td style="padding:8px; border-bottom:1px solid #eee;">
+            <form method="POST" action="{{ url_for('delete_category', cat_id=c.id) }}" onsubmit="return confirm('حذف القسم {{ c.name }}؟');" style="display:inline;">
+              <button class="btn" style="background:#dc3545;">حذف</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>لا توجد أقسام حتى الآن.</p>
+  {% endif %}
+</section>
+
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}✏️ تعديل مقال - مدونة CIT{% endblock %}
+
+{% block content %}
+
+<section class="form-section form-card">
+  <h2 class="form-title">✏️ تعديل مقال</h2>
+  <p style="text-align:center; margin-top:-10px; margin-bottom:15px; color:#64748b;">
+    القسم: {{ category_name }} | اسم الملف: <code dir="ltr">{{ filename }}</code>
+  </p>
+
+  <form method="POST"
+        action="{{ url_for('edit_post', category=category, filename=filename) }}"
+        id="postForm"
+        class="form-add-post">
+
+    <!-- عنوان المقال -->
+    <label for="title">📌 عنوان المقال:</label>
+    <input type="text" name="title" id="title" required value="{{ title }}">
+
+    <!-- اسم الملف فقط للعرض (لا نسمح بتغييره هنا) -->
+    <label for="filename">📁 اسم الملف (ثابت):</label>
+    <input type="text" id="filename" value="{{ filename }}" disabled>
+
+    <!-- بطاقة المحرر -->
+    <div class="editor-card">
+      <div class="editor-header">📄 محرر المقال</div>
+      <div id="editor" class="editor-area"></div>
+    </div>
+
+    <!-- الحقل المخفي لمحتوى المقال HTML -->
+    <input type="hidden" name="content" id="content">
+
+    <button type="submit" class="btn" style="margin-top:20px;">
+      💾 حفظ التعديلات
+    </button>
+  </form>
+</section>
+
+<!-- مكتبات Quill -->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const toolbarOptions = [
+    [{ header: [1, 2, 3, false] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ color: [] }, { background: [] }],
+    [{ align: [] }],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    ['blockquote'],
+    ['link', 'image', 'video'],
+    ['clean']
+  ];
+
+  const quill = new Quill('#editor', {
+    theme: 'snow',
+    placeholder: '✍️ حرّر محتوى المقال...',
+    modules: { toolbar: toolbarOptions }
+  });
+
+  // تحميل المحتوى الحالي للمقال
+  const initialContent = {{ content|tojson|safe }};
+  quill.root.innerHTML = initialContent;
+
+  // عند الإرسال: نسخ HTML إلى الحقل المخفي
+  document.getElementById("postForm").addEventListener("submit", function() {
+    document.getElementById("content").value = quill.root.innerHTML;
+  });
+
+  // زر رفع صورة (نفس منطق form.html)
+  const toolbar = document.querySelector('.ql-toolbar');
+  if (toolbar) {
+    const uploadButton = document.createElement('button');
+    uploadButton.type = 'button';
+    uploadButton.innerHTML = "📷";
+    uploadButton.title = "رفع صورة";
+    toolbar.appendChild(uploadButton);
+
+    uploadButton.addEventListener('click', () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.click();
+
+      input.onchange = async () => {
+        const file = input.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const res = await fetch('/upload_image', { method: 'POST', body: formData });
+        const data = await res.json();
+
+        if (data.url) {
+          const range = quill.getSelection(true);
+          quill.insertEmbed(range.index, 'image', data.url);
+        } else {
+          alert("⚠️ فشل رفع الصورة");
+        }
+      };
+    });
+
+    // زر إدراج YouTube (اختياري لكن موافق لـ form.html)
+    const ytButton = document.createElement("button");
+    ytButton.type = "button";
+    ytButton.innerHTML = "🎬";
+    ytButton.title = "إدراج فيديو YouTube";
+    toolbar.appendChild(ytButton);
+
+    ytButton.addEventListener("click", () => {
+      const url = prompt("🎥 أدخل رابط فيديو YouTube:");
+      if (!url) return;
+
+      const match = url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]+)/);
+      if (!match) {
+        alert("❌ الرابط غير صحيح");
+        return;
+      }
+
+      const embedUrl = `https://www.youtube.com/embed/${match[1]}`;
+      const range = quill.getSelection(true);
+      quill.insertEmbed(range.index, 'video', embedUrl);
+    });
+  }
+});
+</script>
+
+{% endblock %}

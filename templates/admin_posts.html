@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}📝 إدارة المقالات - مدونة CIT{% endblock %}
+
+{% block content %}
+<section class="sections-preview">
+  <h2>📝 إدارة المقالات</h2>
+
+  {% if posts and posts|length > 0 %}
+    <div style="overflow-x:auto; margin-top:20px;">
+      <table style="width:100%; border-collapse:collapse; font-size:0.9rem;">
+        <thead>
+          <tr style="background:#eff6ff; color:#1e3a8a;">
+            <th style="padding:8px; border-bottom:1px solid #e5e7eb;">القسم</th>
+            <th style="padding:8px; border-bottom:1px solid #e5e7eb;">عنوان المقال</th>
+            <th style="padding:8px; border-bottom:1px solid #e5e7eb;">اسم الملف</th>
+            <th style="padding:8px; border-bottom:1px solid #e5e7eb;">تحكم</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in posts %}
+            <tr style="border-bottom:1px solid #e5e7eb;">
+              <td style="padding:6px 8px;">{{ p.category_name }}</td>
+              <td style="padding:6px 8px;">{{ p.title }}</td>
+              <td style="padding:6px 8px;" dir="ltr"><code>{{ p.filename }}</code></td>
+              <td style="padding:6px 8px; white-space:nowrap;">
+                <a href="{{ url_for('view_post', category=p.category_folder, filename=p.filename) }}"
+                   class="btn-link btn-small">
+                  👁️ عرض
+                </a>
+                <a href="{{ url_for('edit_post', category=p.category_folder, filename=p.filename) }}"
+                   class="btn-link btn-small">
+                  ✏️ تعديل
+                </a>
+                <form action="{{ url_for('delete_post', category=p.category_folder, filename=p.filename) }}"
+                      method="post"
+                      style="display:inline;"
+                      onsubmit="return confirm('هل أنت متأكد من حذف هذا المقال؟ لا يمكن التراجع.');">
+                  <button type="submit" class="btn-link btn-small danger">
+                    🗑️ حذف
+                  </button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p style="margin-top:15px; color:#6b7280;">لا توجد مقالات حاليًا.</p>
+  {% endif %}
+</section>
+{% endblock %}
